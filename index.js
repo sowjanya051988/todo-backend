@@ -43,16 +43,17 @@ const checkJwt = jwt({
 // Test public route
 //azure setup done
 app.get('/', (req, res) => {
-  res.send(`Todo API is running ${process.env.AUTH0_AUDIENCE}`);
+  res.send(`Todo API is running dtest ${process.env.AUTH0_AUDIENCE}`);
 
 });
 
 // Protected route examples
 app.get('/api/todos', checkJwt, async (req, res) => {
   const userId = req.auth.sub; // Auth0 user id
+  console.log(`User ID: ${userId}`);
 
   try {
-    const [rows] = await pool.query('SELECT * FROM todos');
+    const [rows] = await pool.query('SELECT * FROM todos WHERE user_id = ?', [userId]);
     res.json(rows);
   } catch (error) {
     console.error(error);
@@ -109,17 +110,6 @@ app.delete('/api/todos/:id', checkJwt, async (req, res) => {
     console.error(error);
     res.status(500).send('Database error');
   }
-});
-
-app.get('/env-check', (req, res) => {
-  res.json({
-    DB_HOST: process.env.DB_HOST,
-    DB_USER: process.env.DB_USER,
-    DB_NAME: process.env.DB_NAME,
-    AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
-    AUTH0_AUDIENCE: process.env.AUTH0_AUDIENCE
-    // ⚠️ Don't include DB_PASSWORD in responses
-  });
 });
 
 app.listen(port, () => {
