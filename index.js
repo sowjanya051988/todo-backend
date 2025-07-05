@@ -43,7 +43,7 @@ const checkJwt = jwt({
 // Test public route
 //azure setup done
 app.get('/', (req, res) => {
-  res.send(`Todo API is running dtest ${process.env.AUTH0_AUDIENCE}`);
+  res.send(`Todo API is running ${process.env.AUTH0_AUDIENCE}`);
 
 });
 
