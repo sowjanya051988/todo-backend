@@ -17,6 +17,9 @@ const pool = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  ssl: {
+    rejectUnauthorized: true
+  }
 });
 
 // Auth0 JWT middleware
@@ -106,6 +109,17 @@ app.delete('/api/todos/:id', checkJwt, async (req, res) => {
     console.error(error);
     res.status(500).send('Database error');
   }
+});
+
+app.get('/env-check', (req, res) => {
+  res.json({
+    DB_HOST: process.env.DB_HOST,
+    DB_USER: process.env.DB_USER,
+    DB_NAME: process.env.DB_NAME,
+    AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
+    AUTH0_AUDIENCE: process.env.AUTH0_AUDIENCE
+    // ⚠️ Don't include DB_PASSWORD in responses
+  });
 });
 
 app.listen(port, () => {
